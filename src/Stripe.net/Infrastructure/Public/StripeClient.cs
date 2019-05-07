@@ -11,14 +11,69 @@ namespace Stripe
     /// </summary>
     public class StripeClient : IStripeClient
     {
+        private readonly string apiBase;
+
+        private readonly string apiKey;
+
+        private readonly string clientId;
+
+        private readonly string connectBase;
+
+        private readonly string filesBase;
+
         /// <summary>Initializes a new instance of the <see cref="StripeClient"/> class.</summary>
+        /// <param name="apiBase">TODO apiBase.</param>
+        /// <param name="apiKey">The API key to use to authenticate requests with Stripe.</param>
+        /// <param name="clientId">The client ID to use in OAuth requests.</param>
+        /// <param name="connectBase">TODO connectBase.</param>
+        /// <param name="filesBase">TODO filesBase.</param>
         /// <param name="httpClient">
         /// The <see cref="IHttpClient"/> client to use. If <c>null</c>, an HTTP client will be
         /// created with default parameters.
         /// </param>
-        public StripeClient(IHttpClient httpClient = null)
+        public StripeClient(
+            string apiBase = null,
+            string apiKey = null,
+            string clientId = null,
+            string connectBase = null,
+            string filesBase = null,
+            IHttpClient httpClient = null)
         {
+            this.apiBase = apiBase;
+            this.apiKey = apiKey;
+            this.clientId = clientId;
+            this.connectBase = connectBase;
+            this.filesBase = filesBase;
             this.HttpClient = httpClient ?? BuildDefaultHttpClient();
+        }
+
+        public string ApiBase
+        {
+            get => this.apiBase ?? StripeConfiguration.ApiBase;
+        }
+
+        /// <summary>Gets the API key used to authenticate requests with Stripe.</summary>
+        /// <value>The API key used to authenticate requests with Stripe.</value>
+        public string ApiKey
+        {
+            get => this.apiKey ?? StripeConfiguration.ApiKey;
+        }
+
+        /// <summary>Gets the client ID to use in OAuth requests.</summary>
+        /// <value>The client ID to use in OAuth requests.</value>
+        public string ClientId
+        {
+            get => this.clientId ?? StripeConfiguration.ClientId;
+        }
+
+        public string ConnectBase
+        {
+            get => this.connectBase ?? StripeConfiguration.ConnectBase;
+        }
+
+        public string FilesBase
+        {
+            get => this.filesBase ?? StripeConfiguration.FilesBase;
         }
 
         /// <summary>Gets the <see cref="IHttpClient"/> used to send HTTP requests.</summary>
@@ -42,7 +97,7 @@ namespace Stripe
             CancellationToken cancellationToken = default(CancellationToken))
             where T : IStripeEntity
         {
-            var request = new StripeRequest(method, path, options, requestOptions);
+            var request = new StripeRequest(this, method, path, options, requestOptions);
 
             var response = await this.HttpClient.MakeRequestAsync(request, cancellationToken);
 

@@ -26,7 +26,7 @@ namespace Stripe
 
         public abstract string BasePath { get; }
 
-        public virtual string BaseUrl => StripeConfiguration.ApiBase;
+        public virtual string BaseUrl => this.Client?.ApiBase ?? StripeConfiguration.ApiBase;
 
         /// <summary>
         /// Gets or sets the client used by this service to send requests. If <c>null</c>, then the

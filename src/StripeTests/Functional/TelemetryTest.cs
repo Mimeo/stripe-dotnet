@@ -165,7 +165,7 @@ namespace StripeTests
 
             var httpClient = new System.Net.Http.HttpClient(
                 this.MockHttpClientFixture.MockHandler.Object);
-            var stripeClient = new StripeClient(new Stripe.SystemNetHttpClient(httpClient));
+            var stripeClient = new StripeClient(httpClient: new Stripe.SystemNetHttpClient(httpClient));
 
             StripeConfiguration.StripeClient = stripeClient;
         }
