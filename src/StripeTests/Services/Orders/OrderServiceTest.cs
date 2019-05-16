@@ -17,6 +17,7 @@ namespace StripeTests
         private readonly OrderUpdateOptions updateOptions;
         private readonly OrderPayOptions payOptions;
         private readonly OrderListOptions listOptions;
+        private readonly OrderReturnOptions returnOptions;
 
         public OrderServiceTest(MockHttpClientFixture mockHttpClientFixture)
             : base(mockHttpClientFixture)
@@ -52,6 +53,18 @@ namespace StripeTests
             this.listOptions = new OrderListOptions
             {
                 Limit = 1,
+            };
+
+            this.returnOptions = new OrderReturnOptions
+            {
+                Items = new List<OrderItemOptions>
+                {
+                    new OrderItemOptions
+                    {
+                        Parent = "sku_123",
+                        Type = "sku"
+                    }
+                }
             };
         }
 
@@ -137,6 +150,24 @@ namespace StripeTests
             this.AssertRequest(HttpMethod.Post, "/v1/orders/or_123/pay");
             Assert.NotNull(order);
             Assert.Equal("order", order.Object);
+        }
+
+        [Fact]
+        public void Return()
+        {
+            var order = this.service.Return(OrderId, this.returnOptions);
+            this.AssertRequest(HttpMethod.Post, "/v1/orders/or_123/returns");
+            Assert.NotNull(order);
+            Assert.Equal("order_return", order.Object);
+        }
+
+        [Fact]
+        public async Task ReturnAsync()
+        {
+            var order = await this.service.ReturnAsync(OrderId, this.returnOptions);
+            this.AssertRequest(HttpMethod.Post, "/v1/orders/or_123/returns");
+            Assert.NotNull(order);
+            Assert.Equal("order_return", order.Object);
         }
 
         [Fact]
